@@ -1,24 +1,24 @@
 <?php
-$dsn = 'mysql:dbname=php_db;host=localhost;charset=utf8mb4';
+$dsn = 'mysql:dbname=php_db_app;host=localhost;charset=utf8mb4';
 $user = 'root';
+
 $password = '';
 
-if (isset($_GET['id'])) {
-   try {
-      $pdo = new PDO($dsn, $user, $password);
+try {
+   $pdo = new PDO($dsn, $user, $password);
 
-      $sql = 'DELETE FROM users WHERE id = :id';
-      $stmt = $pdo->prepare($sql);
+   $sql_delete = 'DELETE FROM products WHERE id = :id';
+   $stmt_delete = $pdo->prepare($sql_delete);
 
-      $stmt->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+   $stmt_delete->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
 
-      $stmt->execute();
+   $stmt_delete->execute();
 
-      header('Location: users.php');
-   } catch (PDOException $e) {
-      exit($e->getMessage());
-   }
-} else {
-   exit('idのパラメータの値が存在しません。');
+   $count = $stmt_delete->rowCount();
+
+   $message = "商品を{$count}件削除しました。";
+
+   header("Location: read.php?message={$message}");
+} catch (PDOException $e) {
+   exit($e->getMessage());
 }
-?>
